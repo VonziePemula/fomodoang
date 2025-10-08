@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vonzie Admin — Dark Modern Panel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    :root{
+      --bg:#0b0b0d; --card:#0f1113; --muted:#8a8f98; --accent:#7c3aed;
+    }
+    body{
+      background:linear-gradient(180deg,#050505 0%, #0b0b0d 60%);
+      color:#e6eef8; font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial
+    }
+    .glass{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      backdrop-filter: blur(6px); border:1px solid rgba(255,255,255,0.03)
+    }
+    .muted{color:var(--muted)}
+    .btn-accent{background:linear-gradient(90deg,var(--accent),#5b21b6); color:white}
+    .input{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:.5rem .75rem;border-radius:.5rem}
+    .shadow-soft{box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+    .tab-btn.active{font-weight:bold; border-bottom:2px solid var(--accent);}
+    .tab-content{display:none;}
+    .tab-content.active{display:block;}
+  </style>
+</head>
+<body class="min-h-screen p-6">
+
+<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+  <!-- LEFT: Profile + quick actions -->
+  <aside class="lg:col-span-1 glass p-5 rounded-2xl shadow-soft">
+    <div class="flex items-center gap-4">
+      <div id="profilePhotoWrapper" class="w-20 h-20 rounded-xl overflow-hidden bg-gradient-to-br from-gray-800 to-gray-700 flex items-center justify-center">
+        <img id="profilePhoto" src="" alt="Profile" class="w-full h-full object-cover" />
+      </div>
+      <div>
+        <div class="text-xl font-semibold" id="profileName">Admin</div>
+        <div class="text-sm muted" id="profileRole">Owner</div>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <label class="text-sm muted">Ganti foto profil</label>
+      <input id="photoInput" type="file" accept="image/*" class="mt-2 w-full" />
+      <button id="clearPhoto" class="mt-2 w-full input btn-accent py-2 rounded-md">Hapus Foto</button>
+    </div>
+
+    <hr class="my-4 border-gray-800" />
+
+    <div class="space-y-2">
+      <button id="btnRefresh" class="w-full input py-2 rounded-md flex items-center justify-center gap-2">
+        <i class="fa-solid fa-sync"></i> Refresh Daftar
+      </button>
+      <button id="btnLogout" class="w-full input py-2 rounded-md flex items-center justify-center gap-2">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- RIGHT: Main content -->
+  <main class="lg:col-span-3 space-y-6">
+
+    <section class="glass p-5 rounded-2xl">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold">Vonzie Admin Panel</h1>
+          <p class="muted">Theme: Dark · Modern · Responsive</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="muted text-sm">Signed in as <span id="signedUser">-</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Forms row -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- Add / Create Key -->
+      <div class="glass p-5 rounded-2xl">
+        <h3 class="font-semibold">Tambah / Tambah atau Ganti Key</h3>
+        <p class="muted text-sm mb-3">Buat user baru atau perbarui jika sudah ada.</p>
+
+        <div class="space-y-2">
+          <input id="add_username" class="input w-full" placeholder="username baru" />
+          <input id="add_key" class="input w-full" placeholder="key" />
+          <div class="flex gap-2">
+            <input id="add_duration" class="input flex-1" type="number" placeholder="jumlah" />
+            <select id="add_unit" class="input w-40">
+              <option value="minutes">Menit</option>
+              <option value="hours">Jam</option>
+              <option value="days" selected>Hari</option>
+              <option value="months">Bulan</option>
+            </select>
+          </div>
+          <select id="add_role" class="input w-full">
+            <option value="USER">USER</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="OWNER">OWNER</option>
+          </select>
+          <div class="flex gap-2">
+            <button id="btnAddKey" class="btn-accent py-2 rounded-md flex-1">Simpan</button>
+            <button id="btnClearAdd" class="input py-2 rounded-md">Bersihkan</button>
+          </div>
+          <div id="add_msg" class="text-sm muted"></div>
+        </div>
+      </div>
+
+      <!-- Edit / Extend / Delete -->
+      <div class="glass p-5 rounded-2xl">
+        <h3 class="font-semibold">Edit / Extend / Delete</h3>
+        <p class="muted text-sm mb-3">Pilih user dari tabel lalu gunakan form ini.</p>
+
+        <div class="space-y-2">
+          <input id="edit_oldusername" class="input w-full" placeholder="old username (dari tabel)" />
+          <input id="edit_username" class="input w-full" placeholder="username baru" />
+          <input id="edit_key" class="input w-full" placeholder="key baru" />
+          <select id="edit_role" class="input w-full">
+            <option value="USER">USER</option>
+            <option value="ADMIN">ADMIN</option>
+            <option value="OWNER">OWNER</option>
+          </select>
+
+          <div class="flex gap-2">
+            <button id="btnEditKey" class="btn-accent py-2 rounded-md flex-1">Edit</button>
+            <button id="btnDeleteKey" class="input py-2 rounded-md">Delete</button>
+          </div>
+
+          <hr class="my-2 border-gray-800" />
+
+          <div class="grid grid-cols-2 gap-2">
+            <input id="extend_amount" class="input" type="number" placeholder="jumlah extend" />
+            <select id="extend_unit" class="input">
+              <option value="minutes">Menit</option>
+              <option value="hours">Jam</option>
+              <option value="days" selected>Hari</option>
+              <option value="months">Bulan</option>
+            </select>
+          </div>
+          <button id="btnExtendKey" class="btn-accent py-2 rounded-md w-full">Extend</button>
+          <div id="edit_msg" class="text-sm muted"></div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Users table -->
+    <section class="glass p-5 rounded-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-semibold">Daftar Users</h3>
+        <div class="muted text-sm">Klik baris untuk isi form edit</div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left table-auto">
+          <thead class="text-sm muted">
+            <tr>
+              <th class="p-2">Username</th>
+              <th class="p-2">Role</th>
+              <th class="p-2">Key</th>
+              <th class="p-2">Expired</th>
+              <th class="p-2">Action</th>
+            </tr>
+          </thead>
+          <tbody id="users_table">
+            <!-- filled by JS -->
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+    <!-- Permissions -->
+    <section class="glass p-5 rounded-2xl">
+      <h3 class="font-semibold">Ubah Permission Role</h3>
+      <p class="muted text-sm mb-3">Hanya Owner yang bisa mengubah permissions — endpoint: /update-permission</p>
+
+      <div class="flex gap-2 max-w-2xl">
+        <select id="perm_role" class="input w-48">
+          <option value="USER">USER</option>
+          <option value="ADMIN">ADMIN</option>
+          <option value="OWNER">OWNER</option>
+        </select>
+        <input id="perm_name" class="input flex-1" placeholder="permission name (eg: userManagement)" />
+        <select id="perm_enabled" class="input w-40">
+          <option value="true">Enabled</option>
+          <option value="false">Disabled</option>
+        </select>
+        <button id="btnUpdatePerm" class="btn-accent py-2 rounded-md">Update</button>
+      </div>
+      <div id="perm_msg" class="muted text-sm mt-2"></div>
+    </section>
+
+  </main>
+
+</div>
+
+<script>
+  // ---------- Utilities ----------
+  const $ = id => document.getElementById(id);
+  const signedUserEl = $('signedUser');
+
+  function showMsg(el, txt, ok=true) { 
+    el.textContent = txt; 
+    el.classList.toggle('text-red-400', !ok); 
+  }
+
+  // ---------- Profile photo ----------
+  function loadProfile() {
+    const p = localStorage.getItem('vonzie_profile')
+    if (p) {
+      const obj = JSON.parse(p);
+      $('profilePhoto').src = obj.photo || '';
+      $('profileName').textContent = obj.name || 'Admin';
+      $('profileRole').textContent = obj.role || 'Owner';
+      signedUserEl.textContent = obj.sessionUser || (obj.name||'Admin');
+    } else {
+      $('profilePhoto').src = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512"><rect width="100%" height="100%" fill="#0f1724"/><text x="50%" y="54%" font-size="120" fill="#9aa4b2" font-family="Arial" text-anchor="middle" alignment-baseline="middle">V</text></svg>');
+      $('profileName').textContent = 'Admin';
+      $('profileRole').textContent = 'Owner';
+      signedUserEl.textContent = '-';
+    }
+  }
+
+  $('photoInput').addEventListener('change', async (e)=>{
+    const f = e.target.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      const data = reader.result;
+      const obj = JSON.parse(localStorage.getItem('vonzie_profile')||'{}');
+      obj.photo = data; obj.name = obj.name||'Admin';
+      localStorage.setItem('vonzie_profile', JSON.stringify(obj));
+      loadProfile();
+    }
+    reader.readAsDataURL(f);
+  });
+  $('clearPhoto').addEventListener('click', ()=>{ localStorage.removeItem('vonzie_profile'); loadProfile(); });
+
+  // ---------- Fetch users ----------
+  async function fetchUsers() {
+    const tbody = $('users_table'); tbody.innerHTML = '<tr><td colspan="5" class="p-4 muted">Memuat...</td></tr>';
+    try {
+      const res = await fetch('/users');
+      if (!res.ok) throw new Error('No /users endpoint');
+      const users = await res.json();
+      if (!Array.isArray(users)) throw new Error('Invalid response');
+      renderUsers(users);
+    } catch(err) {
+      tbody.innerHTML = `<tr><td colspan="5" class="p-4 muted">Gagal mengambil daftar users. Pastikan server memiliki endpoint GET /users. (${err.message})</td></tr>`;
+    }
+  }
+
+  function renderUsers(users){
+    const tbody = $('users_table');
+    if (!users.length) { tbody.innerHTML = '<tr><td colspan="5" class="p-4 muted">(Kosong)</td></tr>'; return; }
+    tbody.innerHTML = '';
+    users.forEach(u=>{
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-gray-900/40 cursor-pointer';
+      tr.innerHTML = `
+        <td class="p-3 align-top font-medium">${u.username}</td>
+        <td class="p-3 align-top muted">${u.role||'-'}</td>
+        <td class="p-3 align-top muted" title="key">${u.key?u.key.substr(0,20):'-'}</td>
+        <td class="p-3 align-top muted">${u.expired? new Date(u.expired).toLocaleString() : '-'}</td>
+        <td class="p-3"><button data-user="${u.username}" class="btn-edit input py-1 px-3 rounded-md">Pilih</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.querySelectorAll('.btn-edit').forEach(b=>b.addEventListener('click', e=>{
+      const u = e.target.dataset.user;
+      const item = users.find(x=>x.username===u);
+      if (!item) return;
+      $('edit_oldusername').value = item.username;
+      $('edit_username').value = item.username;
+      $('edit_key').value = item.key || '';
+      $('edit_role').value = item.role || 'USER';
+    }));
+  }
+
+  // ---------- Actions ----------
+  async function postJson(url, body){
+    const res = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+    return res.json();
+  }
+
+  fetch('/edit-key', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          oldUsername,
+          username,
+          key,
+          role
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('User updated successfully!');
+          location.reload();
+        } else {
+          alert('Error: ' + data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while updating the user.');
+      });
+    }
+    
+    function extendUser(e, username) {
+      e.preventDefault();
+      const amount = document.getElementById('extend-amount-' + username).value;
+      const unit = document.getElementById('extend-unit-' + username).value;
+      
+      fetch('/extend-key', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          amount,
+          unit
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('User expiry extended successfully!');
+          location.reload();
+        } else {
+          alert('Error: ' + data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while extending the user expiry.');
+      });
+    }
+    
+    function deleteUser(username) {
+      if (confirm('Are you sure you want to delete user ' + username + '?')) {
+        fetch('/delete-key', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('User deleted successfully!');
+            location.reload();
+          } else {
+            alert('Error: ' + data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while deleting the user.');
+        });
+      }
+    }
+    
+    // Sender Management Functions
+    document.getElementById('connectSenderForm')?.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const number = document.getElementById('senderNumber').value;
+      
+      if (!number) {
+        alert('Please enter a valid number');
+        return;
+      }
+      
+      fetch('/connect-sender', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ number })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('Sender connected successfully!');
+          location.reload();
+        } else {
+          alert('Error: ' + data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while connecting the sender.');
+      });
+    });
+    
+    function deleteSender(number) {
+      if (confirm('Are you sure you want to delete sender ' + number + '?')) {
+        fetch('/delete-sender', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ number })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('Sender deleted successfully!');
+            location.reload();
+          } else {
+            alert('Error: ' + data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while deleting the sender.');
+        });
+      }
+    }
+    
+    // Permission Management Functions
+    document.getElementById('admin-user-management')?.addEventListener('change', function() {
+      updatePermission('admin', 'userManagement', this.checked);
+    });
+    
+    document.getElementById('admin-sender-management')?.addEventListener('change', function() {
+      updatePermission('admin', 'senderManagement', this.checked);
+    });
+    
+    document.getElementById('moderator-user-management')?.addEventListener('change', function() {
+      updatePermission('moderator', 'userManagement', this.checked);
+    });
+    
+    document.getElementById('moderator-sender-management')?.addEventListener('change', function() {
+      updatePermission('moderator', 'senderManagement', this.checked);
+    });
+    
+    document.getElementById('helper-user-management')?.addEventListener('change', function() {
+      updatePermission('helper', 'userManagement', this.checked);
+    });
+    
+    document.getElementById('helper-sender-management')?.addEventListener('change', function() {
+      updatePermission('helper', 'senderManagement', this.checked);
+    });
+    
+    function updatePermission(role, permission, enabled) {
+      fetch('/update-permission', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          role,
+          permission,
+          enabled
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (!data.success) {
+          alert('Error updating permission: ' + data.message);
+          // Revert the toggle
+          document.getElementById(role + '-' + permission).checked = !enabled;
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while updating the permission.');
+        // Revert the toggle
+        document.getElementById(role + '-' + permission).checked = !enabled;
+      });
+    }
+    
+    // Handle add key form submission
+    document.getElementById('addKeyForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(e.target);
+      const params = new URLSearchParams(formData);
+      
+      fetch('/add-key', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('Key added successfully!');
+          location.reload();
+        } else {
+          alert('Error: ' + data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while adding the key.');
+      });
+    });
+
+</script>
+</body>
+
+</html>

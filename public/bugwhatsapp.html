@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+/* ===================== General ===================== */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center; /* horizontal center */
+  align-items: center;     /* vertical center */
+  background: #0b001f;     /* latar belakang */
+  font-family: 'Inter', sans-serif;
+}
+h1{
+  margin:1rem 0;
+  text-align:center;
+  text-shadow:0 0 20px #bb33ff,0 0 40px #9b30ff;
+}
+
+/* Container scrollable */
+.main-container{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2rem;
+  padding:1rem 0;
+}
+
+/* Glass card */
+.glass-card{
+  backdrop-filter: blur(60px);
+  background: rgba(20,5,50,0.6);
+  border-radius:2rem;
+  padding:1.5rem;
+  box-shadow:0 40px 120px rgba(187,51,255,0.9), 0 0 40px #9b30ff inset;
+  max-width:400px;
+  width:90%;
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+}
+
+/* Buttons */
+.btn-cyber{
+  padding:0.7rem 1.5rem;
+  border-radius:1rem;
+  font-weight:900;
+  color:#fff;
+  cursor:pointer;
+  text-shadow:0 0 6px #fff,0 0 20px #bb33ff;
+  background: linear-gradient(90deg,#9b30ff,#bb33ff,#d966ff,#a64dff,#9b30ff);
+  background-size:400% 400%;
+  animation:gradientMove 3s linear infinite;
+  transition:transform 0.2s;
+}
+.btn-cyber:hover{transform:scale(1.05);}
+@keyframes gradientMove{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+/* Dropdown */
+.dropdown-container{position:relative;width:100%;}
+.dropdown-menu{
+  position:absolute;top:100%;left:0;width:100%;
+  background:rgba(30,5,60,0.95);
+  border-radius:1rem;
+  opacity:0; visibility:hidden;
+  transition:all 0.3s ease-in-out;
+  z-index:50;
+}
+.dropdown-menu div{
+  cursor:pointer; padding:0.8rem 1rem;
+  font-weight:700; color:#bb33ff;
+  transition:0.2s;
+}
+.dropdown-menu div:hover{
+  background:#9b30ff; color:#fff;
+  transform:scale(1.1);
+}
+
+/* Terminal */
+#terminalLog{
+  background:#100020;
+  color:#bb33ff;
+  font-family:monospace;
+  padding:1rem;
+  height:120px;
+  overflow-y:auto;
+  border-radius:1rem;
+  box-shadow:0 0 40px #bb33ff;
+  font-size:0.75rem;
+}
+
+/* Notifications */
+#notification{
+  position:fixed; top:10px; right:10px;
+  background: rgba(187,51,255,0.2);
+  backdrop-filter: blur(40px);
+  border:2px solid #bb33ff;
+  border-radius:1rem; padding:1rem 1.5rem;
+  display:flex; align-items:center; gap:1rem;
+  box-shadow:0 0 50px #bb33ff,0 0 50px #9b30ff inset;
+  font-weight:700; opacity:0; transition:0.5s;
+  z-index:100;
+}
+#notification.show{opacity:1;}
+#notification img{
+  width:40px; height:40px; border-radius:0.8rem;
+  object-fit:cover; animation:thumbZoom 3s infinite;
+}
+@keyframes thumbZoom{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+
+/* Toggle Music */
+.music-toggle{
+  position:fixed; bottom:15px; right:15px;
+  width:45px; height:45px;
+  display:flex; align-items:center; justify-content:center;
+  background:#bb33ff; color:#fff;
+  border-radius:50%; cursor:pointer;
+  box-shadow:0 0 20px #bb33ff,0 0 20px #9b30ff inset;
+  transition:transform 0.3s ease, box-shadow 0.3s ease;
+  z-index:1000;
+}
+.music-toggle.playing{animation:spin 3s linear infinite;}
+@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+
+/* Particles */
+canvas#particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
+
+/* Responsive */
+@media (max-width:768px){
+  h1{font-size:1.2rem;}
+  .glass-card{padding:1rem;}
+  #jid,.btn-cyber,#dropdownBtn{padding:0.6rem 1rem;font-size:0.8rem;}
+  #terminalLog{height:100px;font-size:0.7rem;}
+  #notification{padding:0.6rem 1rem;gap:0.5rem;top:5px;right:5px;}
+  #notification img{width:28px;height:28px;}
+  .music-toggle{width:38px;height:38px;bottom:10px;right:10px;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<div class="main-container">
+  <section id="bugwhatsapp" class="active">
+    <div class="glass-card">
+      <img src="https://k.top4top.io/p_3528gs2jm0.png" alt="Thumbnail" class="w-full rounded-xl shadow-lg">
+      <input id="jid" type="text" placeholder="Target WhatsApp jid" class="px-4 py-2 rounded-xl bg-purple-900 text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+
+      <!-- Dropdown -->
+      <div class="dropdown-container">
+        <button id="dropdownBtn" class="btn-cyber w-full flex justify-between items-center px-4 py-2">
+          <span id="selectedBug">Pilih Bug</span>
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        <div id="dropdownMenu" class="dropdown-menu rounded-xl shadow-lg">
+          <div data-bug="audioX">Audio X Blank</div>
+          <div data-bug="megaCrash">Mega Crash</div>
+          <div data-bug="loopSpam">Loop Spam</div>
+          <div data-bug="glitchBomb">Glitch Bomb</div>
+          <div data-bug="hyperLoop">Hyper Loop</div>
+          <div data-bug="quantumCrash">Quantum Crash</div>
+          <div data-bug="omegaBlast">Omega Blast</div>
+          <div data-bug="infinityCrash">Infinity Crash</div>
+        </div>
+      </div>
+
+      <button id="sendBugBtn" class="btn-cyber mt-3 w-full">SEND BUG</button>
+      <div id="terminalLog">Terminal Log: Ready...</div>
+    </div>
+  </section>
+</div>
+
+<div id="notification">
+  <img src="https://k.top4top.io/p_3528gs2jm0.png" alt="Thumbnail">
+  <span>Bug berhasil dikirim!</span>
+</div>
+
+<!-- MUSIC TOGGLE -->
+<div class="music-toggle" onclick="toggleMusic()" title="Music Toggle">
+  <i class="fas fa-music"></i>
+  <audio id="bgMusic" src="https://files.catbox.moe/a5ncoy.mp3" loop autoplay></audio>
+</div>
+
+<audio id="beepAudio" src="https://freesound.org/data/previews/522/522653_6497391-lq.mp3"></audio>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js"></script>
+<script>
+// Terminal log
+const terminalLog=document.getElementById('terminalLog');
+function addLog(msg){terminalLog.innerHTML+=`<div>> ${msg}</div>`;terminalLog.scrollTop=terminalLog.scrollHeight;}
+
+// Dropdown
+const dropdownBtn=document.getElementById('dropdownBtn');
+const dropdownMenu=document.getElementById('dropdownMenu');
+const selectedBugSpan=document.getElementById('selectedBug');
+let selectedBug=null;
+dropdownBtn.addEventListener('click',()=>{
+  dropdownMenu.classList.toggle('opacity-0');
+  dropdownMenu.classList.toggle('invisible');
+  dropdownMenu.classList.toggle('opacity-100');
+  dropdownMenu.classList.toggle('visible');
+});
+dropdownMenu.querySelectorAll('div').forEach(item=>{
+  item.addEventListener('click',()=>{
+    selectedBug=item.dataset.bug;
+    selectedBugSpan.textContent=item.textContent;
+    dropdownMenu.classList.add('opacity-0','invisible');
+    dropdownMenu.classList.remove('opacity-100','visible');
+  });
+});
+document.addEventListener('click',function(e){
+  if(!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)){
+    dropdownMenu.classList.remove('opacity-100','visible');
+    dropdownMenu.classList.add('opacity-0','invisible');
+  }
+});
+
+// Send bug
+// Send bug
+const jidInput=document.getElementById('jid');
+const sendBtn=document.getElementById('sendBugBtn');
+const beep=document.getElementById('beepAudio');
+const notification=document.getElementById('notification');
+
+sendBtn.addEventListener('click',async ()=>{
+  const jid=jidInput.value.trim();
+  const bug=selectedBug;
+  if(!jid){ alert('Masukkan JID target!'); return; }
+  if(!bug){ alert('Pilih Bug dulu!'); return; }
+
+  addLog(`Mengirim bug "${bug}" ke ${jid}...`);
+  try{
+    const res=await await fetch(`/attack/metode?target=${encodeURIComponent(target)}&metode=${encodeURIComponent(selectedMethod)}`,{
+      headers:{'Authorization':`Bearer ${token}`}
+    });
+    const data=await res.json();
+    if(data.success){ showNotification(`Bug "${bug}" berhasil dikirim!`,'https://k.top4top.io/p_3528gs2jm0.png'); addLog(`Bug berhasil dikirim ke ${jid}`);}
+    else{ showNotification(`Gagal mengirim bug!`,'https://k.top4top.io/p_3528gs2jm0.png'); addLog(`Gagal mengirim bug ke ${jid}`);}
+  }catch(err){showNotification(`Error: ${err.message}`,'https://k.top4top.io/p_3528gs2jm0.png');addLog(`Error: ${err.message}`);}
+});
+
+// Notification
+function showNotification(msg,imgUrl){
+  notification.querySelector('span').textContent=msg;
+  notification.querySelector('img').src=imgUrl;
+  notification.classList.add('show');
+  beep.currentTime=0; beep.play();
+  setTimeout(()=>{notification.classList.remove('show');},4500);
+}
+
+// Music toggle
+const musicToggle=document.querySelector('.music-toggle');
+const bgMusic=document.getElementById('bgMusic');
+function toggleMusic(){
+  if(bgMusic.paused){ bgMusic.play(); musicToggle.classList.add('playing'); }
+  else{ bgMusic.pause(); musicToggle.classList.remove('playing'); }
+}
+
+// Particles
+const canvas=document.getElementById('particles');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+let particlesArray=[];
+const colors=['#bb33ff','#9b30ff','#d966ff','#a64dff'];
+class Particle{
+  constructor(){this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.size=Math.random()*3+1; this.speedX=Math.random()*2-1; this.speedY=Math.random()*2-1; this.color=colors[Math.floor(Math.random()*colors.length)];}
+  update(){this.x+=this.speedX; this.y+=this.speedY; if(this.x>canvas.width||this.x<0)this.speedX*=-1; if(this.y>canvas.height||this.y<0)this.speedY*=-1;}
+  draw(){ctx.fillStyle=this.color; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill();}
+}
+function initParticles(){particlesArray=[];for(let i=0;i<100;i++)particlesArray.push(new Particle());}
+function handleParticles(){for(let i=0;i<particlesArray.length;i++){particlesArray[i].update();particlesArray[i].draw();for(let j=i;j<particlesArray.length;j++){const dx=particlesArray[i].x-particlesArray[j].x; const dy=particlesArray[i].y-particlesArray[j].y; const distance=Math.sqrt(dx*dx+dy*dy); if(distance<100){ctx.strokeStyle='rgba(187,51,255,'+(1-distance/100)+')'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(particlesArray[i].x,particlesArray[i].y); ctx.lineTo(particlesArray[j].x,particlesArray[j].y); ctx.stroke();}}}}
+function animateParticles(){ctx.clearRect(0,0,canvas.width,canvas.height); handleParticles(); requestAnimationFrame(animateParticles);}
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight; initParticles();});
+initParticles(); animateParticles();
+</script>
+</body>
+</html>

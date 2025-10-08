@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ZyuroXz Panel — Fixed</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    :root{
+      --bg:#0b0b0d; --card:#0f1113; --muted:#8a8f98; --accent:#7c3aed;
+    }
+    body{background:linear-gradient(180deg,#050505 0%, #0b0b0d 60%); color:#e6eef8; font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    .glass{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); backdrop-filter: blur(6px); border:1px solid rgba(255,255,255,0.03)}
+    .muted{color:var(--muted)}
+    .btn-accent{background:linear-gradient(90deg,var(--accent),#5b21b6); color:white}
+    .input{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:.5rem .75rem;border-radius:.5rem}
+    .shadow-soft{box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+    /* (CSS sama persis seperti file asli - saya tidak mengubah styling kecuali menambah sidebar styles) */
+    *{margin:0;padding:0;box-sizing:border-box;font-family:"Poppins",sans-serif}
+    body{background:#0a0a0a;color:#fff;min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden}
+
+    /* Glitch Text */
+    .glitch {
+      position: relative;color: #fff;font-size: 26px;font-weight: 700;letter-spacing: 3px;
+      text-transform: uppercase;text-shadow: 0 0 5px #8a2be2, 0 0 10px #6a00f4;animation: flicker 2s infinite;
+    }
+    .glitch::before,.glitch::after {
+      content: attr(data-text);position: absolute;top: 0;left: 0;width: 100%;
+      overflow: hidden;clip: rect(0, 900px, 0, 0);
+    }
+    .glitch::before {left: 2px;text-shadow: -2px 0 red;animation: glitch-anim 2s infinite linear alternate-reverse;}
+    .glitch::after {left: -2px;text-shadow: -2px 0 blue;animation: glitch-anim2 3s infinite linear alternate-reverse;}
+    @keyframes glitch-anim {0%{clip: rect(42px,9999px,44px,0)}20%{clip: rect(12px,9999px,60px,0)}40%{clip: rect(85px,9999px,140px,0)}60%{clip: rect(12px,9999px,60px,0)}80%{clip: rect(52px,9999px,80px,0)}100%{clip: rect(72px,9999px,140px,0)}}
+    @keyframes glitch-anim2 {0%{clip: rect(12px,9999px,60px,0)}20%{clip: rect(52px,9999px,80px,0)}40%{clip: rect(72px,9999px,140px,0)}60%{clip: rect(42px,9999px,44px,0)}80%{clip: rect(85px,9999px,140px,0)}100%{clip: rect(12px,9999px,60px,0)}}
+    @keyframes flicker {0%,19%,21%,23%,25%,54%,56%,100% {opacity:1}20%,24%,55% {opacity:0.4}}
+
+    header {background:#1a1a1a;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;
+      position:sticky;top:0;z-index:10;box-shadow:0 3px 10px rgba(0,0,0,0.5)}
+    .menu-btn,.profile-btn{font-size:22px;cursor:pointer}
+    header h1{font-size:20px;font-weight:bold;color:#8a2be2;text-shadow:0 0 8px #6a00f4}
+
+    /* Section base */
+    section{display:none;animation:fade 0.5s ease;padding-bottom:110px}
+    section.active{display:block}
+    @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+    .hero{text-align:center;margin:20px}
+    .hero img{width:100%;max-width:420px;border-radius:20px;box-shadow:0 0 25px #8a2be2}
+    .hero img.fallback{object-fit:cover}
+    .hero h2{margin-top:10px}
+    .hero p{font-size:12px;color:#bbb}
+
+    .menu{display:flex;justify-content:space-around;margin:20px 10px}
+    .menu button{background:#1c1c1c;border:none;padding:15px;border-radius:12px;color:#fff;font-size:14px;
+      width:70px;height:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      cursor:pointer;transition:0.3s}
+    .menu button:hover{background:linear-gradient(135deg,#6a00f4,#8a2be2);transform:scale(1.05);
+      box-shadow:0 0 20px #8a2be2}
+    .menu button i{font-size:20px;margin-bottom:5px}
+    .menu button.active {background:linear-gradient(135deg,#6a00f4,#8a2be2); box-shadow:0 0 22px #8a2be2; transform:scale(1.08)}
+
+    .card{background:linear-gradient(135deg,#2a2a2a,#1c1c1c);margin:15px;padding:15px;border-radius:15px;
+      box-shadow:0 0 15px rgba(0,0,0,0.6)}
+    .card h3{margin-bottom:10px;font-size:16px;display:flex;align-items:center;gap:8px}
+    .card h3 i{color:#ff4d4d}
+    .card p{font-size:14px;color:#bbb}
+    .card input,.card select,.card button,.card textarea{
+      width:100%;padding:10px;margin:5px 0;border:none;border-radius:8px;background:#0f0f0f;color:#fff;
+    }
+    .card button{background:#6a00f4;color:#fff;font-weight:bold;cursor:pointer}
+    .card button:hover{background:#8a2be2}
+    .attack-btn{width:100%;padding:12px;background:red;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:bold;box-shadow:0 0 15px red;margin-bottom:15px;transition:0.2s;}
+.attack-btn:hover{background:#ff3333;}
+
+.custom-select{background:#111;color:#fff;border-radius:8px;padding:10px;cursor:pointer;user-select:none;margin-bottom:15px;}
+.custom-select .selected{display:flex;justify-content:space-between;align-items:center;}
+.custom-select .options{background:#000;border:1px solid red;margin-top:5px;border-radius:8px;overflow:hidden;flex-direction:column;display:none;}
+.custom-select .options div{padding:10px;cursor:pointer;display:flex;align-items:center;}
+.custom-select .options div i{margin-right:8px;}
+.custom-select .options div:hover{background:red;}
+
+    .chat-box{max-height:300px;overflow-y:auto;background:#111;padding:10px;border-radius:10px;margin-bottom:10px}
+    .chat-msg{margin:8px 0;font-size:14px;line-height:1.3}
+    .chat-msg .who{font-weight:700;color:#8a2be2;margin-right:8px}
+
+    .stats {
+  margin: 20px;
+  padding: 20px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(106,0,244,0.9), rgba(138,43,226,0.9));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #fff;
+  box-shadow: 0 8px 25px rgba(138,43,226,0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stats:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(138,43,226,0.6);
+}
+
+.stats h3 {
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+}
+
+.stats p {
+  margin: 6px 0;
+  font-size: 15px;
+  color: #e0d4ff;
+  line-height: 1.6;
+}
+
+.skills-container,
+.projects-container {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 25px;
+}
+
+
+    .bottom-nav{position:fixed;bottom:0;left:0;width:100%;background:#1a1a1a;display:flex;justify-content:space-around;
+      align-items:center;padding:10px 0;box-shadow:0 -3px 10px rgba(0,0,0,0.5)}
+    .bottom-nav a{color:#bbb;text-decoration:none;text-align:center;font-size:12px;transition:0.3s;padding:6px 10px;border-radius:8px}
+    .bottom-nav a i{font-size:18px;display:block;margin-bottom:3px}
+    .bottom-nav a.active,.bottom-nav a:hover{color:#8a2be2;text-shadow:0 0 8px #8a2be2;background:rgba(138,43,226,0.06)}
+
+    /* small helpers */
+    .row{display:flex;gap:12px;align-items:center}
+    .col{flex:1}
+    .muted{color:#bbb;font-size:13px}
+    .log{background:#060606;color:#9ef0ff;padding:10px;border-radius:8px;font-family:monospace;font-size:13px;max-height:160px;overflow:auto}
+    .small{font-size:12px;color:#ccc}
+    .badge{background:#111;padding:6px 10px;border-radius:999px;font-weight:700}
+    .top-controls{display:flex;gap:8px;align-items:center}
+
+    /* visual finish pulse */
+    .finish-pulse {
+      position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(0.9);
+      background:linear-gradient(90deg,#6a00f4,#8a2be2);padding:20px 30px;border-radius:12px;
+      color:#fff;font-weight:800;z-index:999;box-shadow:0 0 40px rgba(106,0,244,0.6);
+      opacity:0;pointer-events:none;transition:opacity .25s, transform .35s;
+    }
+    .finish-pulse.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+
+    /* profile modal */
+    .modal {position:fixed;left:0;top:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);opacity:0;pointer-events:none;transition:opacity .2s}
+    .modal.show{opacity:1;pointer-events:auto}
+    .modal .panel{width:90%;max-width:420px;background:#0f0f10;padding:18px;border-radius:12px}
+
+    @media(min-width:900px){
+      .menu{max-width:800px;margin:20px auto}
+      .card{max-width:900px;margin:15px auto}
+    }
+  
+    .skills-container,
+  .projects-container {
+    gap: 15px;
+  }
+}
+
+.project-box {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid #00e5ff;
+  padding: 20px;
+  border-radius: 15px;
+  width: 250px;
+  box-shadow: 0 0 15px #00e5ff33;
+  transition: 0.3s;
+  color: #e0f7fa;
+}
+
+.project-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 25px #00e5ff;
+}
+
+/* ===== FEATURE BOX ===== */
+.feature-box {
+  background: rgba(0,0,0,0.5);
+  border: 1px solid #00e5ff;
+  border-radius: 15px;
+  padding: 20px;
+  margin: 10px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 0 15px #00e5ff33;
+  text-align: center;
+}
+
+.select-wrapper {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.select-selected {
+  background: #0a0018;
+  color: #c084fc;
+  padding: 10px;
+  border: 1px solid rgba(168, 85, 247, 0.6);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 0 12px rgba(138, 43, 226, 0.3);
+  transition: all 0.3s ease-in-out;
+}
+
+.select-selected:hover {
+  box-shadow: 0 0 20px rgba(192, 132, 252, 0.6);
+  border-color: #a855f7;
+  color: #fff;
+}
+
+.select-items {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: rgba(15, 0, 35, 0.95);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  border-radius: 8px;
+  display: none;
+  flex-direction: column;
+  z-index: 100;
+  box-shadow: 0 0 25px rgba(160, 32, 255, 0.4);
+  backdrop-filter: blur(6px);
+}
+
+.select-items div {
+  padding: 8px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #d8b4fe;
+  transition: all 0.25s ease;
+  text-shadow: 0 0 5px rgba(168, 85, 247, 0.5);
+}
+
+.select-items div:hover {
+  background: linear-gradient(90deg, #6d28d9, #9333ea);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+  transform: scale(1.03);
+}
+
+.select-items i {
+  margin-right: 8px;
+  color: #a855f7;
+  text-shadow: 0 0 6px #c084fc;
+}
+
+.select-arrow {
+  transition: 0.3s ease;
+  color: #a855f7;
+  text-shadow: 0 0 8px rgba(168, 85, 247, 0.8);
+}
+
+.select-arrow.rotate {
+  transform: rotate(180deg);
+}
+
+
+/* ===== SIDEBAR STYLES (ADDED) ===== */
+#sideMenu {
+  position: fixed;
+  top: 0;
+  left: -320px; /* hidden */
+  width: 280px;
+  height: 100vh;
+  background: linear-gradient(180deg,#0f0f10,#141214);
+  box-shadow: 8px 0 30px rgba(0,0,0,0.6);
+  padding: 18px;
+  z-index: 9999;
+  transition: left 0.28s cubic-bezier(.2,.9,.3,1);
+  overflow-y: auto;
+  border-right: 1px solid rgba(138,43,226,0.08);
+  backdrop-filter: blur(6px);
+}
+#sideMenu.show { left: 0; }
+#sideMenu .sm-header { display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px; }
+#sideMenu h4 { margin:0;font-size:18px;color:#fff;letter-spacing:0.6px; }
+#sideMenu .sm-close { background:transparent;border:none;color:#bbb;font-size:20px;cursor:pointer; }
+#sideMenu nav a { display:flex;align-items:center;gap:10px;padding:10px 8px;border-radius:8px;color:#ddd;text-decoration:none;margin-bottom:6px;transition:background .18s, color .18s; }
+#sideMenu nav a i { width:20px;text-align:center;font-size:16px;color:#8a2be2; }
+#sideMenu nav a:hover, #sideMenu nav a.active { background:rgba(138,43,226,0.07); color:#fff; box-shadow: inset 0 0 18px rgba(138,43,226,0.03); }
+#sideMenu .sm-divider { height:1px;background:rgba(255,255,255,0.03);margin:12px 0;border-radius:2px; }
+#sideMenu .sm-footer { margin-top:14px;font-size:13px;color:#9ea3a9 }
+#sideMenu a.external::after { content: "↗"; margin-left:auto; opacity:0.5; font-size:12px; }
+@media (max-width:600px){
+  #sideMenu { width: 100%; left: -100%; }
+  #sideMenu.show { left: 0; }
+}
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <header>
+    <div class="menu-btn" id="topMenuBtn" title="Toggle menu"><i class="fas fa-bars"></i></div>
+    <h1 class="glitch" data-text="ZyuroXz">ZyuroXz</h1>
+    <div class="profile-btn" id="profileBtn" title="Profile"><i class="fas fa-user-circle"></i></div>
+    <div id="sideMenu" aria-hidden="true">
+    <div class="sm-header">
+      <h4>ZyuroXz Menu</h4>
+      <button class="sm-close" id="sideMenuClose" aria-label="Close menu">✕</button>
+    </div>
+
+    <nav>
+      <a href="#" data-target="home" class="nav-link active"><i class="fas fa-home"></i>Home</a>
+      <a href="#" data-target="bugwhatsapp" class="nav-link"><i class="fa-solid fa-bug"></i>Bug WhatsApp</a>
+      <a href="#" data-target="nikparse" class="nav-link"><i class="fas fa-comment"></i> Nik Parse</a>
+      <a href="#" data-target="ddos" class="nav-link"><i class="fa-solid fa-bolt"></i>DDOS Tools</a>
+      <a href="#" data-target="account" class="nav-link"><i class="fas fa-user-cog"></i>Account</a>
+      <div class="sm-divider"></div>
+      <a href="https://t.meRbcdeep" target="_blank" class="nav-link external"><i class="fab fa-telegram"></i>Telegram</a>
+      <a href="https://wa.me/62857734669119" target="_blank" class="nav-link external"><i class="fa-solid fa-bug"></i>WhatsApp Web</a>
+      <h3><a href="#" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Log out</a></h3>
+      <div class="sm-divider"></div>
+      <div class="sm-footer">Tip: tekan <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> untuk buka Chat.</div>
+    </nav>
+  </div>
+  </header>
+
+  <!-- Sidebar menu -->
+  <div id="sideMenu" aria-hidden="true">
+    <div class="sm-header">
+      <h4>ZyuroXz Menu</h4>
+      <button class="sm-close" id="sideMenuClose" aria-label="Close menu">✕</button>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <section id="home" class="active">
+    <div class="hero">
+     <div class="card" id="photoCard">
+  <h3><i class="fa-solid fa-bug"></i> SomeOne </h3>
+  <div style="position:relative;text-align:center">
+    <img id="SomeOneImg" src="https://c.top4top.io/p_35467ga4e0.jpg" 
+         alt="SomeOne"
+         style="width:100%;max-width:400px;border-radius:12px;box-shadow:0 0 25px #8a2be2">
+         <h2 class="glitch" data-text="ZyuroXz">ZyuroXz</h2>
+         <p>© Copyright By Darkness</p>
+    <div style="margin-top:10px;display:flex;justify-content:center;gap:10px">
+    </div>
+  </div>
+</div>
+<div class="center">
+  <div class="card">
+    <div class="banner">
+      <p><b>Username:</b> <span id="bannerUsername">User</span></p>
+      <p><b>Password:</b> <span>?????</span></p>
+      <p><b>Role:</b> <span id="bannerRole">VIP</span></p>
+      <p><b>Expired:</b> <span>-</span></p>
+    </div>
+    <h2>Team & Credits</h2>
+    <p class="info"><b>VexxuzzZ:</b> Website Builder</p>
+    <p class="info"><b>AI:</b> Helper</p>
+    <p class="info"><b>777ExC - Community:</b> My Team</p>
+  </div>
+</div>
+    </div>
+    <div class="menu" id="quickMenu">
+      <button data-target="ddos"><i class="fa-solid fa-bolt"></i><small>Ddos</small></button>
+      <button data-target="bugwhatsapp"><i class="fa-solid fa-bug"></i><small>Whatsap</small></button>
+      <button data-target="https://t.me/Rbcdeep"><i class="fab fa-telegram"></i><small>Telegram</small></button>
+      <button data-target="account"><i class="fas fa-cog"></i><small>Account</small></button>
+    </div>
+  </section>
+  
+  <section id="nikparse" class="section">
+  <div class="hero">
+    <h2 class="glitch" data-text="Nik Parse">Nik Parse</h2>
+    <p>Masukkan teks di bawah untuk diparse:</p>
+  </div>
+
+  <div class="card">
+    <textarea id="inputText" placeholder="Masukkan teks..." rows="5"></textarea>
+    <button id="parseBtn">Parse</button>
+  </div>
+
+  <div class="card">
+    <h3>Hasil Parse</h3>
+    <pre id="outputText" class="log"></pre>
+  </div>
+</section>
+   
+     <section id="ddos" class="section">
+<div class="center">
+  <div class="card">
+    <h2>SomeOne - DDoS</h2>
+    <div class="form-group">
+      <i class="fas fa-target icon"></i>
+      <input type="text" id="target" placeholder="Target">
+    </div>
+    <div class="form-group">
+      <i class="fas fa-clock icon"></i>
+      <input type="number" id="time" placeholder="Time (s)">
+    </div>
+
+    <div class="select-wrapper">
+      <div class="select-selected">Select Method <i class="fa-solid fa-chevron-down select-arrow"></i></div>
+      <div class="select-items">
+        <div data-value="BYPASS"><i class="fa-solid fa-shield"></i> BYPASS</div>
+        <div data-value="CIBI"><i class="fa-solid fa-bolt"></i> CIBI</div>
+        <div data-value="FLOOD"><i class="fa-solid fa-water"></i> FLOOD</div>
+        <div data-value="GLORY"><i class="fa-solid fa-star"></i> GLORY</div>
+        <div data-value="HTTPS"><i class="fa-solid fa-lock"></i> HTTPS</div>
+        <div data-value="HTTPX"><i class="fa-solid fa-code"></i> HTTPX</div>
+        <div data-value="RAW"><i class="fa-solid fa-database"></i> RAW</div>
+        <div data-value="TLS"><i class="fa-solid fa-network-wired"></i> TLS</div>
+      </div>
+    </div>
+
+    <button id="attackBtn"><i class="fa-solid fa-bolt"></i> Launch DDoS</button>
+  </div>
+</div>
+</section>
+
+<section id="bugwhatsapp" class="section">
+<div class="center">
+  <div class="card">
+    <h2>SomeOne - Crash</h2>
+    <div class="form-group">
+      <i class="fas fa-target icon"></i>
+      <input type="text" id="target" placeholder="Target">
+    </div>
+    <div class="form-group">
+      <i class="fas fa-clock icon"></i>
+      <input type="number" id="time" placeholder="Time (s)">
+    </div>
+
+    <div class="select-wrapper">
+      <div class="select-selected">Select Method <i class="fa-solid fa-chevron-down select-arrow"></i></div>
+      <div class="select-items">
+        <div data-value="BYPASS"><i class="fa-solid fa-shield"></i> BYPASS</div>
+        <div data-value="CIBI"><i class="fa-solid fa-bolt"></i> CIBI</div>
+        <div data-value="FLOOD"><i class="fa-solid fa-water"></i> FLOOD</div>
+        <div data-value="GLORY"><i class="fa-solid fa-star"></i> GLORY</div>
+        <div data-value="HTTPS"><i class="fa-solid fa-lock"></i> HTTPS</div>
+        <div data-value="HTTPX"><i class="fa-solid fa-code"></i> HTTPX</div>
+        <div data-value="RAW"><i class="fa-solid fa-database"></i> RAW</div>
+        <div data-value="TLS"><i class="fa-solid fa-network-wired"></i> TLS</div>
+      </div>
+    </div>
+
+    <button id="sendBugBtn"><i class="fa-solid fa-bolt"></i> Launch Bug Attack</button>
+  </div>
+</div>
+
+<div id="notification">
+    <img src="https://k.top4top.io/p_3528gs2jm0.png" alt="Thumbnail">
+    <span>Bug berhasil dikirim!</span>
+</div>
+</section>
+   
+ <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <a href="#" class="active" data-target="home"><i class="fas fa-home"></i>Home</a>
+    <a href="#" data-target="nikparse"><i class="fas fa-phone"></i>Nik Parse</a>
+    <a href="#" data-target="ddos"><i class="fa-solid fa-bolt"></i>Panel</a>
+    <a href="#" data-target="https://wa.me/62857734669119"><i class="fas fa-comment"></i>ChatMe</a>
+  </nav>
+  
+<script>
+/* ==========================
+   Navigation & UI helpers
+   ========================== */
+function showPage(page, el){
+  document.querySelectorAll("section").forEach(sec=>sec.classList.remove("active"));
+  const target = document.getElementById(page);
+  if(target) target.classList.add("active");
+
+  document.querySelectorAll(".bottom-nav a").forEach(a=>a.classList.remove("active"));
+  if(el) el.classList.add('active');
+
+  document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));
+  const quick = document.querySelector(`.menu button[data-target="${page}"]`);
+  if(quick) quick.classList.add('active');
+
+  document.querySelectorAll('#sideMenu .nav-link').forEach(x=> x.classList.toggle('active', x.dataset.target === page));
+}
+
+document.querySelectorAll(".bottom-nav a").forEach(a=>{
+  a.addEventListener("click", e=>{
+    e.preventDefault();
+    showPage(a.dataset.target, a);
+  });
+});
+
+document.querySelectorAll('.menu button[data-target]').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    const t = b.dataset.target || '';
+    if(t.startsWith('http')){
+      window.open(t,'_blank');
+      return;
+    }
+    showPage(t);
+    document.querySelectorAll(".bottom-nav a").forEach(a=>a.classList.remove("active"));
+  });
+});
+
+/* -------------------------
+   Sidebar toggle + nav
+   ------------------------- */
+const topMenuBtn=document.getElementById("topMenuBtn");
+const sideMenu=document.getElementById("sideMenu");
+const sideMenuClose=document.getElementById("sideMenuClose");
+
+function openSidebar(){
+  sideMenu.classList.add('show');
+  sideMenu.setAttribute('aria-hidden','false');
+}
+function closeSidebar(){
+  sideMenu.classList.remove('show');
+  sideMenu.setAttribute('aria-hidden','true');
+}
+
+if(topMenuBtn) topMenuBtn.addEventListener('click', ()=> sideMenu.classList.contains('show') ? closeSidebar() : openSidebar());
+if(sideMenuClose) sideMenuClose.addEventListener('click', closeSidebar);
+
+// close sidebar on outside click or Esc
+document.addEventListener('click', e=>{
+  if(!sideMenu.classList.contains('show')) return;
+  if(!sideMenu.contains(e.target) && !topMenuBtn.contains(e.target)) closeSidebar();
+});
+document.addEventListener('keydown', e=>{if(e.key==='Escape') closeSidebar();});
+
+// sidebar nav links
+document.querySelectorAll('#sideMenu .nav-link').forEach(a=>{
+  a.addEventListener('click', e=>{
+    e.preventDefault();
+    const target = a.dataset.target;
+    document.querySelectorAll('#sideMenu .nav-link').forEach(x=>x.classList.remove('active'));
+    a.classList.add('active');
+    closeSidebar();
+    const bottom = document.querySelector(`.bottom-nav a[data-target="${target}"]`);
+    showPage(target, bottom || null);
+  });
+});
+
+/* ==========================
+   Auth & User Info
+   ========================== */
+function logout(){
+  localStorage.removeItem('authToken');
+  window.location.href='login.html';
+}
+
+const token = localStorage.getItem("authToken");
+if(!token){ logout(); }
+else{ loadUserInfo(); }
+
+function loadUserInfo(){
+  try{
+    const payload = JSON.parse(atob(token));
+    ['bannerUsername','sidebarUsername'].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.textContent = payload.username || 'User';
+    });
+    ['bannerRole','sidebarRole'].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.textContent = payload.role || 'VIP';
+    });
+  }catch(e){
+    logout();
+  }
+}
+
+/* ==========================
+   Nik Parse
+   ========================== */
+document.getElementById('parseBtn').addEventListener('click', ()=>{
+  const input=document.getElementById('inputText').value;
+  const output=document.getElementById('outputText');
+  output.textContent = input ? input.toUpperCase().replace(/\s+/g,'-') : '(Hasil kosong)';
+});
+
+/* ==========================
+   Custom Select
+   ========================== */
+let selectedMethod1="";
+const selectWrapper=document.querySelector('.select-wrapper');
+const selectedDiv=selectWrapper.querySelector('.select-selected');
+const itemsDiv=selectWrapper.querySelector('.select-items');
+const arrow=selectedDiv.querySelector('.select-arrow');
+
+selectedDiv.addEventListener('click', ()=>{
+  itemsDiv.style.display = itemsDiv.style.display==='flex'?'none':'flex';
+  arrow.classList.toggle('rotate');
+});
+itemsDiv.querySelectorAll('div').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    selectedMethod1=item.dataset.value;
+    selectedDiv.innerHTML=item.innerHTML+' <i class="fa-solid fa-chevron-down select-arrow"></i>';
+    itemsDiv.style.display='none';
+    arrow.classList.remove('rotate');
+  });
+});
+
+/* ==========================
+   Attack Button
+   ========================== */
+document.getElementById('attackBtn').addEventListener('click', async()=>{
+  const target=document.getElementById('target').value.trim();
+  const time=document.getElementById('time').value.trim();
+  const attackBtn=document.getElementById('attackBtn');
+
+  if(!target || !time || !selectedMethod1) return showPopup("Error","Please fill all required fields","error");
+
+  attackBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Launching...';
+  attackBtn.disabled=true;
+
+  try{
+    const res=await fetch('/ddos',{
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'Authorization':`Bearer ${token}` },
+      body:JSON.stringify({ key:'NullByte', metode:selectedMethod1, target, time })
+    });
+    const data=await res.json();
+    if(res.ok && data.status){
+      showPopup("Success",`
+        <b>Target:</b> ${data.Target}<br>
+        <b>Method:</b> ${data.Method}<br>
+        <b>Time:</b> ${data.Time}s<br>
+        <b>Status:</b> Success
+      `,"success");
+    }else{
+      showPopup("Error",data.message||"Attack failed","error");
+    }
+  }catch(err){
+    showPopup("Error","Network error, please try again.","error");
+  }finally{
+    setTimeout(()=>{ attackBtn.innerHTML='<i class="fa-solid fa-bolt"></i> Launch DDoS'; attackBtn.disabled=false; },1500);
+  }
+});
+
+/* ==========================
+   Particles Background
+   ========================== */
+function initParticlesCanvas(id, colorArray, lineColor, maxDist, radius){
+  const canvas=document.getElementById(id);
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+
+  let particlesArray=[];
+  class Particle{
+    constructor(){
+      this.x=Math.random()*canvas.width;
+      this.y=Math.random()*canvas.height;
+      this.size=Math.random()*radius+1;
+      this.speedX=Math.random()*2-1;
+      this.speedY=Math.random()*2-1;
+      this.color=colorArray[Math.floor(Math.random()*colorArray.length)];
+    }
+    update(){
+      this.x+=this.speedX; this.y+=this.speedY;
+      if(this.x>canvas.width||this.x<0)this.speedX*=-1;
+      if(this.y>canvas.height||this.y<0)this.speedY*=-1;
+    }
+    draw(){
+      ctx.fillStyle=this.color;
+      ctx.beginPath();
+      ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+      ctx.fill();
+    }
+  }
+
+  function initParticles(){particlesArray=[];for(let i=0;i<100;i++) particlesArray.push(new Particle());}
+  function handleParticles(){
+    for(let i=0;i<particlesArray.length;i++){
+      particlesArray[i].update(); particlesArray[i].draw();
+      for(let j=i;j<particlesArray.length;j++){
+        const dx=particlesArray[i].x-particlesArray[j].x;
+        const dy=particlesArray[i].y-particlesArray[j].y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<maxDist){
+          ctx.strokeStyle=`rgba(${lineColor},${1-dist/maxDist})`;
+          ctx.lineWidth=1;
+          ctx.beginPath();
+          ctx.moveTo(particlesArray[i].x,particlesArray[i].y);
+          ctx.lineTo(particlesArray[j].x,particlesArray[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    handleParticles();
+    requestAnimationFrame(animate);
+  }
+
+  window.addEventListener('resize', ()=>{
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+    initParticles();
+  });
+
+  initParticles();
+  animate();
+}
+
+// Particles neon cyan
+initParticlesCanvas('particles',['#0ff','#06b6d4','#3b82f6','#f43f5e','#facc15','#ff00ff'],'0,255,255',100,3);
+
+// Red background points (existing)
+initParticlesCanvas('bg',['red'],'255,0,0',120,2);
+
+</script>
+</body>
+</html>
